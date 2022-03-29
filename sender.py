@@ -113,7 +113,7 @@ def main():
         p.start()
 
         # Wait for timeout or until the process finishes
-        p.join(int(round(sender.timeout / 1000)))
+        p.join(sender.timeout / 1000)
 
         # Check if the thread is still active
         if p.is_alive():

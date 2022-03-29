@@ -66,7 +66,7 @@ class Server:
     
     def Wait_Timeout(self):
         # Wait until all packets are received and acknowledged
-        while all(value == True for value in self.acked.values()):
+        while all(value != True for value in self.acked.values()):
             message, _ = self.sock.recvfrom(2048)
             ds = json.loads(message.decode()) # deserialized dict from json
             if ds['type'] == 0 and self.acked[ds['seqnum']] == False:

@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 from multiprocessing import Process
@@ -38,27 +39,30 @@ class Server:
 
         # Reads data from <filename> and sends up to 500 characters
         # worth of data until reaching EOF
-        f = open(self.filename)
-        data = f.read(500)
-        while data != "":
-            # Creating new entry for this seqnum
-            if seqnum not in self.acked:
-                self.acked[seqnum] = False
-
-            # Checking if this packet needs to be sent
-            if self.acked[seqnum] == False:
-                packet = {
-                    'type': 1,
-                    'seqnum': seqnum,
-                    'length': len(data),
-                    'data': data
-                }
-                s = json.dumps(packet) # serialized json from dict
-                self.sock.sendto(s.encode(), self.receiver)
-
-            seqnum += len(data)
+        with open(self.filename) as f:
             data = f.read(500)
-        f.close()
+            while data != "":
+                # Creating new entry for this seqnum
+                if seqnum not in self.acked:
+                    self.acked[seqnum] = False
+
+                # Checking if this packet needs to be sent
+                if self.acked[seqnum] == False:
+                    packet = {
+                        'type': 1,
+                        'seqnum': seqnum,
+                        'length': len(data),
+                        'data': data
+                    }
+                    s = json.dumps(packet) # serialized json from dict
+                    self.sock.sendto(s.encode(), self.receiver)
+                
+                # Recording the sent packet
+                Write_Log("seqnum.log", seqnum)
+
+                # Retrieving new file data
+                seqnum += len(data)
+                data = f.read(500)
     
     def Wait_Timeout(self):
         # Wait until all packets are received and acknowledged
@@ -67,6 +71,7 @@ class Server:
             ds = json.loads(message.decode()) # deserialized dict from json
             if ds['type'] == 0 and self.acked[ds['seqnum']] == False:
                 self.acked[ds['seqnum']] = True
+                Write_Log("ack.log", ds['seqnum'])   
     
     def Send_EOT(self):
         # Creating the EOT packet
@@ -85,9 +90,18 @@ class Server:
         message, _ = self.sock.recvfrom(2048)
         ds = json.loads(message.decode()) # deserialized dict from json
         assert ds['type'] == 2 and ds['length'] == 0
+        Write_Log("ack.log", ds['seqnum'])
 
 
 def main():
+    # Remove the log files if it exists
+    if os.path.exists("seqnum.log"):
+        os.remove("seqnum.log")
+    
+    if os.path.exists("ack.log"):
+        os.remove("ack.log")
+
+    # Creates a new sender object
     sender = Server()
     sender.Setup_UDP_Socket()
     while True:
@@ -107,6 +121,8 @@ def main():
             p.terminate()
             p.join()
             continue
+
+        # All packets are successfully acked
         break
 
     # Sends the EOT signal

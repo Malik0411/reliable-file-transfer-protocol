@@ -2,7 +2,7 @@ import sys
 
 # Helper function:
 # Writes a seqnum to a log file
-def Write_Log(filename, seqnum):
+def log(filename, seqnum):
     with open(filename, "a") as f:
         f.write(f'{seqnum}\n')
 

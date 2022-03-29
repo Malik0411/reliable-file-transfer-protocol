@@ -58,7 +58,7 @@ class Server:
                     self.sock.sendto(s.encode(), self.receiver)
                 
                 # Recording the sent packet
-                Write_Log("seqnum.log", seqnum)
+                log("seqnum.log", seqnum)
 
                 # Retrieving new file data
                 seqnum += len(data)
@@ -71,7 +71,7 @@ class Server:
             ds = json.loads(message.decode()) # deserialized dict from json
             if ds['type'] == 0 and self.acked[ds['seqnum']] == False:
                 self.acked[ds['seqnum']] = True
-                Write_Log("ack.log", ds['seqnum'])   
+                log("ack.log", ds['seqnum'])   
     
     def Send_EOT(self):
         # Creating the EOT packet
@@ -90,7 +90,7 @@ class Server:
         message, _ = self.sock.recvfrom(2048)
         ds = json.loads(message.decode()) # deserialized dict from json
         assert ds['type'] == 2 and ds['length'] == 0
-        Write_Log("ack.log", ds['seqnum'])
+        log("ack.log", ds['seqnum'])
 
 
 def main():

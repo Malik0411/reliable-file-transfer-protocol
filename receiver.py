@@ -26,7 +26,7 @@ try:
     prob = float(sys.argv[2])
 except:
     # print error message and exit if req_code cannot be converted to an integer
-    print("req_code is not a float")
+    print("probability is not a float")
     exit()
 
 try:
@@ -51,7 +51,7 @@ while True:
         # create UDP socket
         UDPSocket = socket(AF_INET, SOCK_DGRAM)
 
-        # bind UDP socket to port 0 (let OS pick availiable port)
+        # bind UDP socket to input port
         UDPSocket.bind(('', n_port))
     except:
         print("n_port is unavailable")
@@ -59,7 +59,9 @@ while True:
 
     # wait for message from UDP client
     message, clientAddress = UDPSocket.recvfrom(2048)
+
     print("received msg")
+
     # convert to dictionary
     data_loaded = json.loads(message.decode())
 
@@ -68,6 +70,8 @@ while True:
     seq_num = data_loaded["seqnum"]
 
     if type == 1:
+
+        print("type = 1")
         # log
         f_arrival.write(str(seq_num) + '\n')
 
@@ -75,12 +79,15 @@ while True:
         drop = random.random() < prob
 
         if drop:
+
+            print("dropped")
+
             f_drop.write(str(seq_num) + '\n')
             continue
 
         # send ack
         msg = {
-          "type": "1",
+          "type": "0",
           "seqnum": seq_num,
           "length": 0,
           "data": ""
@@ -100,6 +107,8 @@ while True:
 
             # check if duplicate and already processed
             if packet[0] < next_expected_packet:
+
+                print("duplicate packet"+ str(packet[0])
                 continue
             d = packet[1]
 
@@ -109,6 +118,8 @@ while True:
 
     # EOT, close connection
     elif type == 2:
+
+        print("type = 2")
         # send EOT back
         msg = {
           "type": "2",

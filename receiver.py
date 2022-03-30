@@ -89,7 +89,7 @@ while True:
         msg = {
           "type": "0",
           "seqnum": seq_num,
-          "length": 0,
+          "length": "0",
           "data": ""
         }
 
@@ -124,7 +124,7 @@ while True:
         msg = {
           "type": "2",
           "seqnum": seq_num,
-          "length": 0,
+          "length": "0",
           "data": ""
         }
 

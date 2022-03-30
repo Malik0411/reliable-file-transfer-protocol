@@ -71,7 +71,7 @@ class Server:
             message, _ = self.sock.recvfrom(2048)
             ds = json.loads(message.decode()) # deserialized dict from json
             print(ds)
-            if ds['type'] == 0 and self.acked[ds['seqnum']] == False:
+            if ds['type'] == '0' and self.acked[ds['seqnum']] == False:
                 self.acked[ds['seqnum']] = True
                 log("ack.log", ds['seqnum'])   
     
@@ -91,7 +91,7 @@ class Server:
         # Receiving the EOT packet
         message, _ = self.sock.recvfrom(2048)
         ds = json.loads(message.decode()) # deserialized dict from json
-        assert ds['type'] == 2 and ds['length'] == 0
+        assert ds['type'] == '2' and ds['length'] == '0'
         log("ack.log", ds['seqnum'])
 
 

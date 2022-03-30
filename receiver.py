@@ -108,7 +108,7 @@ while True:
             # check if duplicate and already processed
             if packet[0] < next_expected_packet:
 
-                print("duplicate packet"+ str(packet[0])
+                print("duplicate packet"+ str(packet[0]))
                 continue
             d = packet[1]
 

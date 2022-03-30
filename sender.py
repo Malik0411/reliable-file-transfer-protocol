@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 from socket import *
 from helper import *
 
@@ -22,7 +22,8 @@ class Server:
         except ValueError as e:
             printexit(f"ERROR: <receiver_port>={sys.argv[2]}, <sender_port>={sys.argv[3]} and <timeout>={sys.argv[4]} must be integers :: {e}")
         
-        self.acked = dict()
+        manager = Manager()
+        self.acked = manager.dict()
         self.receiver = (self.receiver_address, self.receiver_port)
     
     def Setup_UDP_Socket(self):
@@ -65,14 +66,14 @@ class Server:
                 seqnum += len(data)
                 data = f.read(500)
     
-    def Wait_Timeout(self):
+    def Wait_Timeout(self, acked):
         # Wait until all packets are received and acknowledged
-        while not all(value == True for value in self.acked.values()):
+        while not all(value == True for value in acked.values()):
             message, _ = self.sock.recvfrom(2048)
             ds = json.loads(message.decode()) # deserialized dict from json
             print(ds)
-            if ds['type'] == '0' and self.acked[ds['seqnum']] == False:
-                self.acked[ds['seqnum']] = True
+            if ds['type'] == '0' and acked[ds['seqnum']] == False:
+                acked[ds['seqnum']] = True
                 log("ack.log", ds['seqnum'])   
     
     def Send_EOT(self):
@@ -111,7 +112,7 @@ def main():
         sender.Send_Packet()
 
         # Creating a thread to receive acks until timeout
-        p = Process(target=sender.Wait_Timeout)
+        p = Process(target=sender.Wait_Timeout, args=(sender.acked,))
         p.start()
 
         # Wait for timeout or until the process finishes

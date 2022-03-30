@@ -40,7 +40,7 @@ except:
 q = []
 next_expected_packet = 0
 
-# open file for log 
+# open file for log
 f_arrival = open('arrival.log', 'w')
 f_drop = open('drop.log', 'w')
 f_data = open(file_name, 'w')
@@ -59,7 +59,7 @@ while True:
 
     # wait for message from UDP client
     message, clientAddress = UDPSocket.recvfrom(2048)
-
+    print("received msg")
     # convert to dictionary
     data_loaded = json.loads(message.decode())
 
@@ -68,14 +68,14 @@ while True:
     seq_num = data_loaded["seqnum"]
 
     if type == 1:
-        # log 
-        f_arrival.write(seq_num + '\n')
+        # log
+        f_arrival.write(str(seq_num) + '\n')
 
         # drop with probability
-        drop = random.random() < probability
+        drop = random.random() < prob
 
         if drop:
-            f_drop.write(seq_num + '\n')
+            f_drop.write(str(seq_num) + '\n')
             continue
 
         # send ack
@@ -85,6 +85,11 @@ while True:
           "length": 0,
           "data": ""
         }
+
+        # send ack message to client
+        encoded_json = json.dumps(msg)
+        UDPSocket.sendto(encoded_json.encode(), clientAddress)
+        UDPSocket.close()
 
         # add packet to queue
         heapq.heappush(q, (seq_num, data_loaded))
@@ -104,7 +109,7 @@ while True:
 
     # EOT, close connection
     elif type == 2:
-        # send EOT back 
+        # send EOT back
         msg = {
           "type": "2",
           "seqnum": seq_num,
@@ -123,5 +128,5 @@ while True:
         f_data.close()
 
         break
-    elif: 
+    else:
         print("wrong file format")

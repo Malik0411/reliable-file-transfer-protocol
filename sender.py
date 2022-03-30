@@ -57,9 +57,9 @@ class Server:
                     s = json.dumps(packet) # serialized json from dict
                     self.sock.sendto(s.encode(), self.receiver)
                     print(s)
-                
-                # Recording the sent packet
-                log("seqnum.log", seqnum)
+
+                    # Recording the sent packet
+                    log("seqnum.log", seqnum)
 
                 # Retrieving new file data
                 seqnum += len(data)
@@ -67,7 +67,7 @@ class Server:
     
     def Wait_Timeout(self):
         # Wait until all packets are received and acknowledged
-        while all(value == True for value in self.acked.values()) == False:
+        while not all(value == True for value in self.acked.values()):
             message, _ = self.sock.recvfrom(2048)
             ds = json.loads(message.decode()) # deserialized dict from json
             print(ds)

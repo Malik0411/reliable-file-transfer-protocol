@@ -5,8 +5,6 @@ import json
 import random
 import heapq
 
-n_port = 0
-
 # verify number of arguments passed in from command line
 n = len(sys.argv)
 
@@ -25,22 +23,24 @@ except:
 try:
     prob = float(sys.argv[2])
 except:
-    # print error message and exit if req_code cannot be converted to an integer
+    # print error message and exit if prob cannot be converted to a float
     print("probability is not a float")
     exit()
 
 try:
     file_name = str(sys.argv[3])
 except:
-    # print error message and exit if req_code cannot be converted to an integer
+    # print error message and exit if file_name cannot be converted to a string
     print("file_name is not a string")
     exit()
 
-#create queue for packets
+#create priority queue for packets
 q = []
+
+#keep track of next expected sequence number
 next_expected_packet = 0
 
-# open file for log
+# open files for logging
 f_arrival = open('arrival.log', 'w')
 f_drop = open('drop.log', 'w')
 f_data = open(file_name, 'w')
@@ -60,32 +60,28 @@ while True:
     # wait for message from UDP client
     message, clientAddress = UDPSocket.recvfrom(2048)
 
-    print("received msg")
-
-    # convert to dictionary
+    # convert from json to dictionary
     data_loaded = json.loads(message.decode())
 
-    # check data type
     type = int(data_loaded["type"])
     seq_num = data_loaded["seqnum"]
 
+    # data type
     if type == 1:
 
-        print("type = 1")
-        # log
+        # log 
         f_arrival.write(str(seq_num) + '\n')
 
         # drop with probability
         drop = random.random() < prob
 
         if drop:
-
             print("dropped")
-
+            # log drop
             f_drop.write(str(seq_num) + '\n')
             continue
 
-        # send ack
+        # send ack to client
         msg = {
           "type": "0",
           "seqnum": seq_num,
@@ -93,7 +89,6 @@ while True:
           "data": ""
         }
 
-        # send ack message to client
         encoded_json = json.dumps(msg)
         UDPSocket.sendto(encoded_json.encode(), clientAddress)
         UDPSocket.close()
@@ -101,15 +96,17 @@ while True:
         # add packet to queue
         heapq.heappush(q, (seq_num, data_loaded))
 
-        # process queue
+        # process queue while it is not empty and the packet with the smallest 
+        # seq_num is either the next_expected_packet or it is a duplicate
         while len(q) > 0 and q[0][0] <= next_expected_packet:
             packet = heapq.heappop(q)
 
             # check if duplicate and already processed
             if packet[0] < next_expected_packet:
-
                 print("duplicate packet"+ str(packet[0]))
                 continue
+
+            # get packet info
             d = packet[1]
 
             f_data.write(d["data"])

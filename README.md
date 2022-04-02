@@ -15,9 +15,9 @@ where
 **probability** = drop probability\
 **output_file_name** = name of the file into which the received data is written
 
-eg. python3 receiver.py 12001 0.2 output\
+eg. python3 receiver.py 12001 0.2 output
 
-This was tested on **ubuntu2004-002**\
+This was tested on **ubuntu2004-002**
 
 
 ### Sender
@@ -27,10 +27,10 @@ python3 sender.py <address> <n_port_receiver> <n_port_sender> <timeout> <file_na
 
 **address** = host address of the receiver\
 **n_port_receiver** = UDP port number used by the receiver to receive data from the sender\
-**n_port_sender** = UDP port number used by the sender to send data and receive ACKs from the receiver.\
-**timeout** = timeout interval in milliseconds.\
-**file_name** = name of the file to be transferred.
+**n_port_sender** = UDP port number used by the sender to send data and receive ACKs from the receiver\
+**timeout** = timeout interval in milliseconds\
+**file_name** = name of the file to be transferred
 
 eg. python3 sender.py ubuntu2004-002 12001 12001 1000 file.txt
 
-This was tested on **ubuntu2004-004**\
+This was tested on **ubuntu2004-004**

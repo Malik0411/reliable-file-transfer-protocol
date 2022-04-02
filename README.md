@@ -21,7 +21,7 @@ where,
 
 An example execution of the receiver is:
 ```
-eg. python3 receiver.py 12001 0.2 output
+python3 receiver.py 12001 0.2 output
 ```
 This was tested on **ubuntu2004-002**
 

@@ -45,6 +45,8 @@ f_arrival = open('arrival.log', 'w')
 f_drop = open('drop.log', 'w')
 f_data = open(file_name, 'w')
 
+print("The receiver is ready for packets")
+
 while True:
 
     try:

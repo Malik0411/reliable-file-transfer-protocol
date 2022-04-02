@@ -71,7 +71,7 @@ class Server:
         while not all(value == True for value in acked.values()):
             message, _ = self.sock.recvfrom(2048)
             ds = json.loads(message.decode()) # deserialized dict from json
-
+            print(ds)
             if ds['type'] == '0' and acked[ds['seqnum']] == False:
                 acked[ds['seqnum']] = True
                 log("ack.log", ds['seqnum'])   

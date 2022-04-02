@@ -76,7 +76,6 @@ while True:
         drop = random.random() < prob
 
         if drop:
-            print("dropped")
             # log drop
             f_drop.write(str(seq_num) + '\n')
             continue
@@ -103,7 +102,6 @@ while True:
 
             # check if duplicate and already processed
             if packet[0] < next_expected_packet:
-                print("duplicate packet"+ str(packet[0]))
                 continue
 
             # get packet info
@@ -116,7 +114,6 @@ while True:
     # EOT, close connection
     elif type == 2:
 
-        print("type = 2")
         # send EOT back
         msg = {
           "type": "2",
@@ -137,4 +134,5 @@ while True:
 
         break
     else:
-        print("wrong file format")
+        print("wrong message type")
+        exit()

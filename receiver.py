@@ -68,11 +68,11 @@ while True:
     type = int(data_loaded["type"])
     seq_num = data_loaded["seqnum"]
 
+    # log packet arrival
+    f_arrival.write(str(seq_num) + '\n')
+
     # data type
     if type == 1:
-
-        # log 
-        f_arrival.write(str(seq_num) + '\n')
 
         # drop with probability
         drop = random.random() < prob

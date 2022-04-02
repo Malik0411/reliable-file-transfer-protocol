@@ -1,12 +1,12 @@
 # Reliable file transfer protocol
 
-**Malik Omar Salvosa (MOSALVOS)**
+**Malik Omar Salvosa** (WatIAM: *MOSALVOS*, ID: *20677744*)
 
-**Maria Zhang (M357ZHAN)**
+**Maria Zhang** (WatIAM: *M357ZHAN*, ID: *20748228*)
 
 ## Running the programs
 
-All of the code was written and run with Python 3.\
+All of our code was written and run with Python 3.\
 `receiver.py` must be started before `sender.py`
 
 ### Receiver

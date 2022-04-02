@@ -23,7 +23,7 @@ This was tested on **ubuntu2004-002**\
 ### Sender
 
 Command to run the sender:\
-python3 sender.py <address> <n_port_receiver> <n_port_sender> <timeout> <file_name>\
+python3 sender.py <address> <n_port_receiver> <n_port_sender> <timeout> <file_name>
 
 **address** = host address of the receiver\
 **n_port_receiver** = UDP port number used by the receiver to receive data from the sender\

@@ -57,7 +57,6 @@ class Server:
                     }
                     s = json.dumps(packet) # serialized json from dict
                     self.sock.sendto(s.encode(), self.receiver)
-                    print(s)
 
                     # Recording the sent packet
                     log("seqnum.log", seqnum)
